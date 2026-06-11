@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phishing ili legit? — Kviz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --surface2: #1e2230;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #e8eaf0;
+    --muted: #7a7f93;
+    --accent: #6c63ff;
+    --accent-glow: rgba(108,99,255,0.18);
+    --green: #22c55e;
+    --green-bg: rgba(34,197,94,0.1);
+    --green-border: rgba(34,197,94,0.3);
+    --red: #f87171;
+    --red-bg: rgba(248,113,113,0.1);
+    --red-border: rgba(248,113,113,0.3);
+    --amber: #fbbf24;
+    --amber-bg: rgba(251,191,36,0.1);
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .header .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  .header h1 {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    color: #fff;
+  }
+  .header p {
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    line-height: 1.6;
+  }
+
+  /* Progress */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 3px;
+    background: var(--surface2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+    width: 0%;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .q-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .tag-email  { background: rgba(108,99,255,0.15); color: #a89dff; border: 1px solid rgba(108,99,255,0.25); }
+  .tag-sms    { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.25); }
+  .tag-web    { background: rgba(34,197,94,0.1);   color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+
+  .q-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .scenario-label {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .scenario-body {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    color: #c8cce0;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .scenario-body .hl { color: #f87171; }
+
+  /* Buttons */
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 1.25rem;
+  }
+  .btn-answer {
+    padding: 12px 10px;
+    border-radius: 10px;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+  }
+  .btn-answer:hover:not(:disabled) {
+    background: #252a3a;
+    border-color: rgba(255,255,255,0.2);
+  }
+  .btn-answer:active:not(:disabled) { transform: scale(0.97); }
+  .btn-answer:disabled { cursor: default; }
+
+  .btn-answer.correct {
+    background: var(--green-bg);
+    border-color: var(--green-border);
+    color: var(--green);
+  }
+  .btn-answer.wrong {
+    background: var(--red-bg);
+    border-color: var(--red-border);
+    color: var(--red);
+  }
+  .btn-answer.reveal {
+    background: var(--green-bg);
+    border-color: var(--green-border);
+    color: var(--green);
+    opacity: 0.45;
+  }
+
+  /* Explanation */
+  .explanation {
+    margin-top: 1rem;
+    padding: 14px 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.65;
+    display: none;
+    animation: fadein 0.25s ease;
+  }
+  .explanation.show { display: block; }
+  .explanation.correct {
+    background: var(--green-bg);
+    border-left: 3px solid var(--green);
+    color: #86efac;
+  }
+  .explanation.wrong {
+    background: var(--red-bg);
+    border-left: 3px solid var(--red);
+    color: #fca5a5;
+  }
+  .explanation strong { font-weight: 600; }
+
+  /* Footer row */
+  .foot-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+  .score-pill {
+    font-size: 13px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 4px 14px;
+    color: var(--muted);
+  }
+  .score-pill span { color: var(--text); font-weight: 500; }
+  .next-btn {
+    padding: 9px 18px;
+    border-radius: 99px;
+    border: 1px solid var(--accent);
+    background: var(--accent-glow);
+    color: #a89dff;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: none;
+    transition: background 0.15s;
+  }
+  .next-btn:hover { background: rgba(108,99,255,0.28); }
+
+  /* Result */
+  .result-screen {
+    display: none;
+    animation: fadein 0.3s ease;
+  }
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+  }
+  .result-big {
+    font-size: 56px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+  }
+  .result-sub {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .result-msg {
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    padding: 12px 16px;
+    border-radius: 10px;
+    background: var(--surface2);
+  }
+  .breakdown {
+    text-align: left;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .bd-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 12.5px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .bd-item:last-child { border-bottom: none; }
+  .bd-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .bd-dot.ok { background: var(--green); }
+  .bd-dot.fail { background: var(--red); }
+  .bd-num { color: #555a72; min-width: 18px; font-size: 11px; }
+  .restart-btn {
+    padding: 11px 28px;
+    border-radius: 99px;
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .restart-btn:hover { background: #252a3a; }
+
+  @keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  @media (max-width: 480px) {
+    .btn-row { grid-template-columns: 1fr; }
+    body { padding: 1.25rem 0.75rem 3rem; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <div class="header">
+    <span class="eyebrow">Informatika · sigurnost na mreži</span>
+    <h1>Phishing ili legit?</h1>
+    <p>7 scenarija — e-mail, SMS, web. Prepoznaš li prijevaru?</p>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+    <div class="progress-label" id="prog-label">1 / 7</div>
+  </div>
+
+  <div id="quiz-screen">
+    <div class="card">
+      <div class="q-meta">
+        <span class="tag" id="qtag"></span>
+      </div>
+      <div class="q-title" id="qtitle"></div>
+      <div class="scenario-label" id="slabel"></div>
+      <div class="scenario-body" id="sbody"></div>
+      <div class="btn-row">
+        <button class="btn-answer" id="btn-ph" onclick="answer(true)">⚠️ Phishing / Lažno</button>
+        <button class="btn-answer" id="btn-leg" onclick="answer(false)">✅ Legitimno</button>
+      </div>
+      <div class="explanation" id="expl"></div>
+    </div>
+    <div class="foot-row">
+      <div class="score-pill">Bodovi: <span id="score-val">0</span></div>
+      <button class="next-btn" id="next-btn" onclick="nextQ()">Sljedeće →</button>
+    </div>
+  </div>
+
+  <div class="result-screen" id="result-screen">
+    <div class="result-card">
+      <div class="result-big" id="res-big"></div>
+      <div class="result-sub">od 7 pitanja točno</div>
+      <div class="result-msg" id="res-msg"></div>
+      <div class="breakdown" id="res-breakdown"></div>
+      <button class="restart-btn" onclick="restart()">↺ Igraj ponovo</button>
+    </div>
+  </div>
+
+</div>
+<script>
+const Q = [
+  {
+    tag:"email", tagLabel:"E-mail",
+    title:"Stigao ti je ovaj e-mail. Je li phishing?",
+    label:"Pošiljatelj / Predmet / Sadržaj",
+    body:`Od: <span class="hl">podrska@apple-support-centar.net</span>\nPredmet: Vaš Apple ID je blokiran!\n\nPoštovani korisniče,\nVaš račun je privremeno blokiran zbog sumnjive aktivnosti.\nKliknite ovdje da biste potvrdili identitet u roku od 24 sata\nili će vaš račun biti trajno izbrisan.\n\n<span class="hl">→ http://apple-id-verify.xyz/login</span>`,
+    isPhishing:true,
+    expl:"<strong>Točno — phishing!</strong> Domena pošiljatelja je <em>apple-support-centar.net</em>, a Apple uvijek šalje s <em>@apple.com</em>. Link vodi na <em>apple-id-verify.xyz</em>. Prijetnja i rok od 24h su klasični znakovi manipulacije."
+  },
+  {
+    tag:"sms", tagLabel:"SMS",
+    title:"Primio/la si ovaj SMS. Je li phishing?",
+    label:"SMS poruka",
+    body:`Pošiljatelj: <span class="hl">+385 99 000 1234</span>\n\n"Vaš paket čeka u pošti.\nZa potvrdu dostave kliknite:\n<span class="hl">http://bit.ly/paketzhr99</span>\nAko ne potvrdite u 48h, paket se vraća."`,
+    isPhishing:true,
+    expl:"<strong>Točno — phishing!</strong> Dostavne tvrtke ne šalju <em>bit.ly</em> linkove. Pošiljatelj je obični broj mobitela, a ne kratki servisni broj. Rok od 48h stvara lažni pritisak."
+  },
+  {
+    tag:"web", tagLabel:"Web stranica",
+    title:"Otvorio/la si ovu stranicu. Je li sigurna?",
+    label:"URL u pregledniku",
+    body:`URL: https://www.facebook.com\n🔒 Veza je sigurna (SSL certifikat)\nIzdavač: DigiCert Inc.\n\nStranica prikazuje login formu,\nplave boje i poznati logo.`,
+    isPhishing:false,
+    expl:"<strong>Točno — legitimno!</strong> URL je točno <em>facebook.com</em> s HTTPS-om i valjanim certifikatom. Važno: i phishing stranice mogu imati HTTPS — uvijek provjeri i domenu, ne samo lokot!"
+  },
+  {
+    tag:"email", tagLabel:"E-mail",
+    title:"Stigao ti je e-mail od škole. Je li phishing?",
+    label:"Pošiljatelj / Sadržaj",
+    body:`Od: ravnatelj@os-primjer.hr\nPredmet: Obavijest o izmjeni rasporeda\n\nPoštovani učenici,\nobavještavamo vas da je zbog tehničkih razloga\nraspored za ponedjeljak izmijenjen.\nDetaljni raspored možete pogledati\nna školskim stranicama ili e-Dnevniku.`,
+    isPhishing:false,
+    expl:"<strong>Točno — legitimno!</strong> Domena je školska (<em>.hr</em>), nema sumnjivog linka, nema prijetnji. Poruka upućuje na službene kanale. Sve u redu."
+  },
+  {
+    tag:"web", tagLabel:"Web stranica",
+    title:"Htio/la si se prijaviti na Gmail. Je li ovo prava stranica?",
+    label:"URL u pregledniku",
+    body:`URL: <span class="hl">https://g00gle.com/gmail/login</span>\n🔒 Veza je sigurna\n\nStranica izgleda identično kao Gmail —\nisti dizajn, isti logo, ista forma.\nTraži e-mail i lozinku.`,
+    isPhishing:true,
+    expl:"<strong>Točno — phishing!</strong> URL sadrži <strong>nule umjesto slova O</strong> — <em>g00gle.com</em> nije Google. Ovo je typosquatting. Stranica izgleda identično, ali svi podaci idu napadaču. Provjeri svaki znak!"
+  },
+  {
+    tag:"sms", tagLabel:"SMS",
+    title:"Banka ti je poslala SMS. Je li phishing?",
+    label:"SMS poruka",
+    body:`Pošiljatelj: Erste Bank\n\n"Obavještavamo vas da je na vašem računu\nizvršena transakcija od 847,00 EUR.\nAko niste vi, nazovite nas na\n0800 0030 ili posjetite\nwww.erstebank.hr/sigurnost"`,
+    isPhishing:false,
+    expl:"<strong>Točno — legitimno!</strong> Nema sumnjivog linka, nudi kontakt putem poznate web domene i besplatnog broja. Banka nikad ne traži lozinku ni PIN putem SMS-a."
+  },
+  {
+    tag:"email", tagLabel:"E-mail",
+    title:"Primio/la si nagradu! Je li phishing?",
+    label:"Pošiljatelj / Sadržaj",
+    body:`Od: <span class="hl">nagrade@nagradna-igra-hrvatska2024.com</span>\nPredmet: 🎉 Čestitamo! Vi ste pobitelj!\n\nIzabrani ste kao sretni dobitnik iPhonea 15!\nDa biste preuzeli nagradu, trebate samo\nplatiti troškove dostave od 15€ kreditnom karticom\nna: <span class="hl">http://preuzmi-nagradu.net</span>\n\nPonuda vrijedi samo danas!`,
+    isPhishing:true,
+    expl:"<strong>Točno — phishing!</strong> Nepoznata domena, traženje plaćanja karticom za 'dostavu', lažna hitnost i neočekivana nagrada. Klasična advance-fee prijevara — uvijek lažna."
+  }
+];
+
+let cur=0, score=0, answered=false, results=[];
+
+function render(){
+  const q=Q[cur];
+  document.getElementById('prog').style.width=((cur/Q.length)*100)+'%';
+  document.getElementById('prog-label').textContent=(cur+1)+' / '+Q.length;
+  document.getElementById('qtag').textContent=q.tagLabel;
+  document.getElementById('qtag').className='tag tag-'+q.tag;
+  document.getElementById('qtitle').textContent=q.title;
+  document.getElementById('slabel').textContent=q.label;
+  document.getElementById('sbody').innerHTML=q.body;
+  const exp=document.getElementById('expl');
+  exp.className='explanation'; exp.innerHTML='';
+  document.getElementById('next-btn').style.display='none';
+  ['btn-ph','btn-leg'].forEach(id=>{
+    const b=document.getElementById(id);
+    b.className='btn-answer'; b.disabled=false;
+  });
+  answered=false;
+}
+
+function answer(isPhishing){
+  if(answered) return;
+  answered=true;
+  const q=Q[cur];
+  const correct=isPhishing===q.isPhishing;
+  if(correct) score++;
+  results.push({title:q.title.substring(0,50)+'…', correct});
+  document.getElementById('score-val').textContent=score;
+  const ph=document.getElementById('btn-ph');
+  const leg=document.getElementById('btn-leg');
+  ph.disabled=true; leg.disabled=true;
+  if(isPhishing){
+    ph.className='btn-answer '+(correct?'correct':'wrong');
+    if(!correct) leg.className='btn-answer reveal';
+  } else {
+    leg.className='btn-answer '+(correct?'correct':'wrong');
+    if(!correct) ph.className='btn-answer reveal';
+  }
+  const exp=document.getElementById('expl');
+  exp.className='explanation show '+(correct?'correct':'wrong');
+  exp.innerHTML=(correct?'✅ ':'❌ ')+q.expl;
+  if(cur<Q.length-1){
+    document.getElementById('next-btn').style.display='block';
+  } else {
+    setTimeout(showResult,1400);
+  }
+}
+
+function nextQ(){ cur++; render(); }
+
+function showResult(){
+  document.getElementById('prog').style.width='100%';
+  document.getElementById('prog-label').textContent='Gotovo!';
+  document.getElementById('quiz-screen').style.display='none';
+  const rs=document.getElementById('result-screen');
+  rs.style.display='block';
+  const pct=Math.round((score/Q.length)*100);
+  document.getElementById('res-big').textContent=score+' / '+Q.length;
+  const msgs=[
+    [85,'🔐 Odličan sigurnosni instinkt! Phisheri bi se teško doveli na tebe.'],
+    [57,'👍 Solidno! Malo više provjere URL-ova i bit ćeš neprobojan.'],
+    [0,'⚠️ Phishing te lako može prevariti. Vježbaj prepoznavanje znakova!']
+  ];
+  const msg=msgs.find(m=>pct>=m[0]);
+  document.getElementById('res-msg').textContent=msg[1];
+  document.getElementById('res-breakdown').innerHTML=results.map((r,i)=>
+    `<div class="bd-item"><div class="bd-dot ${r.correct?'ok':'fail'}"></div><span class="bd-num">${i+1}.</span><span>${r.title}</span></div>`
+  ).join('');
+}
+
+function restart(){
+  cur=0; score=0; answered=false; results=[];
+  document.getElementById('result-screen').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  document.getElementById('score-val').textContent='0';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
